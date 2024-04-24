@@ -3,6 +3,7 @@ import { GrpcMethod, Payload } from '@nestjs/microservices';
 import {
   COURSE_SERVICE_NAME,
   CreateCourseRequest,
+  FindAllCourseRequest,
   FindOneCourseRequest,
   SetCourseFileRequest,
   UpdateCourseRequest,
@@ -19,8 +20,8 @@ export class CoursesController {
   }
 
   @GrpcMethod(COURSE_SERVICE_NAME, 'findAllCourses')
-  findAll() {
-    return this.coursesService.findAll();
+  findAll(@Payload() findAllCourseRequest: FindAllCourseRequest) {
+    return this.coursesService.findAll(findAllCourseRequest);
   }
 
   @GrpcMethod(COURSE_SERVICE_NAME, 'findOneCourse')
@@ -45,8 +46,8 @@ export class CoursesController {
   //   return this.coursesService.addFilesToCourse(setCourseFileRequest);
   // }
 
-  @GrpcMethod(COURSE_SERVICE_NAME, 'removeFilesFromCourse')
-  removeFilesFromCourse(@Payload() setCourseFileRequest: SetCourseFileRequest) {
-    return this.coursesService.removeFilesFromCourse(setCourseFileRequest);
-  }
+  // @GrpcMethod(COURSE_SERVICE_NAME, 'removeFilesFromCourse')
+  // removeFilesFromCourse(@Payload() setCourseFileRequest: SetCourseFileRequest) {
+  //   return this.coursesService.removeFilesFromCourse(setCourseFileRequest);
+  // }
 }

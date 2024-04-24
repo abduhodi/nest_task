@@ -10,6 +10,8 @@ import {
   Put,
   BadRequestException,
   ParseIntPipe,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { CreateCourseDto } from '../../common/dto/create-course.dto';
@@ -20,7 +22,9 @@ import {
   SetCourseFileRequest,
   UpdateCourseRequest,
 } from '../../common/interfaces/course';
+import { AuthGuard } from 'common/guards/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('course')
 export class CoursesController implements OnModuleInit {
   private courseService: CourseServiceClient;
@@ -45,9 +49,11 @@ export class CoursesController implements OnModuleInit {
   }
 
   @Get('get-all')
-  async findAll() {
+  async findAll(@Query('page') page?: number, @Query('limit') limit?: number) {
     try {
-      return this.courseService.findAllCourses({});
+      page = isNaN(+page) || +page < 1 ? 1 : +page;
+      limit = isNaN(+limit) || +limit < 0 ? 0 : +limit;
+      return this.courseService.findAllCourses({ page, limit });
     } catch (error) {
       throw new BadRequestException(error?.message);
     }

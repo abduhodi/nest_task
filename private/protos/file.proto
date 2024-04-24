@@ -4,7 +4,7 @@ package file;
 
 service FileService {
     rpc CreateFile(CreateFileRequest) returns (File) {}
-    rpc FindAllFiles(Empty) returns (Files) {}
+    rpc FindAllFiles(FindAllFileRequest) returns (Files) {}
     rpc FindOneFile(FindOneFileRequest) returns (File) {}
     rpc UpdateFile(UpdateFileRequest) returns (File) {}
     rpc RemoveFile(FindOneFileRequest) returns (File) {}
@@ -21,7 +21,7 @@ message File {
 
 message CreateFileRequest {
     string fileName = 1;
-    bytes file = 2;
+    repeated bytes file = 2;
     string fileType = 3;
 }
 
@@ -29,6 +29,11 @@ message Empty {}
 
 message Files {
     repeated File files = 1;
+}
+
+message FindAllFileRequest {
+    int32 page = 1;
+    int32 limit = 2;
 }
 
 message FindOneFileRequest {

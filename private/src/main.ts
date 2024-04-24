@@ -16,6 +16,8 @@ async function startPrivate() {
           join(__dirname, '../../protos/file.proto'),
           join(__dirname, '../../protos/course.proto'),
         ],
+        maxSendMessageLength: 100 * 1024 * 1024,
+        maxReceiveMessageLength: 100 * 1024 * 1024,
       },
     },
   );

@@ -25,7 +25,8 @@ message Tokens {
 }
 
 message GetUserInfoRequest {
-    string accessToken = 1;
+    int32 id = 1;
+    string login = 2;
 }
 
 message User {

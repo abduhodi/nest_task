@@ -4,7 +4,7 @@ package course;
 
 service CourseService {
     rpc CreateCourse(CreateCourseRequest) returns (Course) {}
-    rpc FindAllCourses(Empty) returns (Courses) {}
+    rpc FindAllCourses(FindAllCourseRequest) returns (Courses) {}
     rpc FindOneCourse(FindOneCourseRequest) returns (Course) {}
     rpc UpdateCourse(UpdateCourseRequest) returns (Course) {}
     rpc RemoveCourse(FindOneCourseRequest) returns (Course) {}
@@ -28,6 +28,11 @@ message Empty {}
 
 message Courses {
     repeated Course courses = 1;
+}
+
+message FindAllCourseRequest {
+    int32 page = 1;
+    int32 skip = 2;
 }
 
 message FindOneCourseRequest {

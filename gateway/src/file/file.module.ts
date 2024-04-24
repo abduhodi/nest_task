@@ -1,30 +1,30 @@
 import { Module } from '@nestjs/common';
-import { CoursesController } from './course.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { resolve } from 'path';
+import { join, resolve } from 'path';
+import { FilesController } from './file.controller';
 import {
-  COURSE_SERVICE_NAME,
+  FILE_SERVICE_NAME,
   protobufPackage,
-} from '../../common/interfaces/course';
+} from '../../common/interfaces/file';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     ClientsModule.register([
       {
-        name: COURSE_SERVICE_NAME,
+        name: FILE_SERVICE_NAME,
         transport: Transport.GRPC,
         options: {
           url: 'localhost:50050',
           package: protobufPackage,
-          protoPath: resolve(__dirname, '../../protos/course.proto'),
+          protoPath: resolve(__dirname, '../../protos/file.proto'),
         },
       },
     ]),
     JwtModule,
   ],
 
-  controllers: [CoursesController],
+  controllers: [FilesController],
   providers: [],
 })
-export class CoursesModule {}
+export class FilesModule {}

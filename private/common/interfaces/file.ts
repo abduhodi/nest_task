@@ -14,7 +14,7 @@ export interface File {
 
 export interface CreateFileRequest {
   fileName: string;
-  file: Uint8Array;
+  file: Uint8Array[];
   fileType: string;
 }
 
@@ -23,6 +23,11 @@ export interface Empty {
 
 export interface Files {
   files: File[];
+}
+
+export interface FindAllFileRequest {
+  page: number;
+  limit: number;
 }
 
 export interface FindOneFileRequest {
@@ -44,7 +49,7 @@ export const FILE_PACKAGE_NAME = "file";
 export interface FileServiceClient {
   createFile(request: CreateFileRequest): Observable<File>;
 
-  findAllFiles(request: Empty): Observable<Files>;
+  findAllFiles(request: FindAllFileRequest): Observable<Files>;
 
   findOneFile(request: FindOneFileRequest): Observable<File>;
 
@@ -58,7 +63,7 @@ export interface FileServiceClient {
 export interface FileServiceController {
   createFile(request: CreateFileRequest): Promise<File> | Observable<File> | File;
 
-  findAllFiles(request: Empty): Promise<Files> | Observable<Files> | Files;
+  findAllFiles(request: FindAllFileRequest): Promise<Files> | Observable<Files> | Files;
 
   findOneFile(request: FindOneFileRequest): Promise<File> | Observable<File> | File;
 

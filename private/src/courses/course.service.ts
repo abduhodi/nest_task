@@ -4,20 +4,18 @@ import { Repository } from 'typeorm';
 
 import { RpcException } from '@nestjs/microservices';
 import * as grpc from '@grpc/grpc-js';
-import { Course } from 'common/entities/course.entity';
+import { Course } from '../../common/entities/course.entity';
 import {
   CreateCourseRequest,
+  FindAllCourseRequest,
   FindOneCourseRequest,
-  SetCourseFileRequest,
-  SetCourseFileResponse,
   UpdateCourseRequest,
-} from 'common/interfaces/course';
+} from '../../common/interfaces/course';
 
 @Injectable()
 export class CoursesService {
   constructor(
     @InjectRepository(Course) private courseRepository: Repository<Course>,
-    // private readonly fileService: FilesService,
   ) {}
 
   async create(createCourseRequest: CreateCourseRequest): Promise<Course> {
@@ -47,8 +45,14 @@ export class CoursesService {
     }
   }
 
-  async findAll(): Promise<{ courses: Course[] }> {
-    const courses = await this.courseRepository.find();
+  async findAll(
+    findAllCourseRequest: FindAllCourseRequest,
+  ): Promise<{ courses: Course[] }> {
+    const { page, skip } = findAllCourseRequest;
+    const courses = await this.courseRepository.find({
+      skip: (page - 1) * skip,
+      take: skip,
+    });
     return { courses };
   }
 
@@ -96,74 +100,5 @@ export class CoursesService {
 
     await this.courseRepository.remove(course);
     return course;
-  }
-
-  // async addFilesToCourse(
-  //   setCourseFileRequest: SetCourseFileRequest,
-  // ): Promise<SetCourseFileResponse> {
-  //   const { courseId, fileIds } = setCourseFileRequest;
-  //   const course = await this.courseRepository.findOne({
-  //     where: { id: courseId },
-  //     relations: ['files'],
-  //   });
-
-  //   if (!course) {
-  //     throw new RpcException({
-  //       code: grpc.status.NOT_FOUND,
-  //       message: 'Course not found',
-  //     });
-  //   }
-
-  //   const newFiles = await this.fileService.getFileByRelation(fileIds);
-  //   const existingFileIds = course.files.map((file) => file.id);
-  //   const updatedFiles = [
-  //     ...course.files,
-  //     ...newFiles.filter((file) => !existingFileIds.includes(file.id)),
-  //   ];
-
-  //   course.files = updatedFiles;
-  //   const updatedCourse = await this.courseRepository.save(course);
-
-  //   return {
-  //     course: course,
-  //     files: updatedCourse.files,
-  //   };
-  // }
-
-  async removeFilesFromCourse(
-    setCourseFileRequest: SetCourseFileRequest,
-  ): Promise<SetCourseFileResponse> {
-    const { courseId, fileIds } = setCourseFileRequest;
-    const course = await this.courseRepository.findOne({
-      where: { id: courseId },
-      relations: ['files'],
-    });
-
-    if (!course) {
-      throw new RpcException({
-        code: grpc.status.NOT_FOUND,
-        message: 'Course not found',
-      });
-    }
-
-    const existingFileIds = course.files.map((file) => file.id);
-    const missingFileIds = fileIds.filter(
-      (fileId) => !existingFileIds.includes(fileId),
-    );
-
-    if (missingFileIds.length > 0) {
-      throw new RpcException({
-        code: grpc.status.NOT_FOUND,
-        message: `Files with IDs ${missingFileIds.join(', ')} not found in the course`,
-      });
-    }
-
-    course.files = course.files.filter((file) => !fileIds.includes(file.id));
-    const updatedCourse = await this.courseRepository.save(course);
-
-    return {
-      course: course,
-      files: updatedCourse.files,
-    };
   }
 }

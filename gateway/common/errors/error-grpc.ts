@@ -17,6 +17,7 @@ export class GrpcErrorInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       catchError((error) => {
+        console.log(error);
         if (
           error &&
           error.details &&
@@ -32,10 +33,7 @@ export class GrpcErrorInterceptor implements NestInterceptor {
             throw new BadRequestException(error.message);
           else if (error.code == grpc.status.INTERNAL)
             throw new InternalServerErrorException(error.message);
-          else
-            throw new BadGatewayException(
-              'An error occurred in the gRPC service',
-            );
+          else throw new BadGatewayException(error?.message);
         }
       }),
     );
