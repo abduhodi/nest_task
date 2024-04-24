@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package auth;
+
+service UserService {
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {}
+    rpc LoginUser(CreateUserRequest) returns (Tokens) {}
+    rpc GetUserInfo(GetUserInfoRequest) returns (User) {}
+    rpc UpdateTokens(LogoutUserRequest) returns (Tokens) {}
+    rpc LogoutUser(LogoutUserRequest) returns (CreateUserResponse) {}
+}
+
+message CreateUserRequest {
+    string login = 1;
+    string password = 2;
+}
+
+message CreateUserResponse {
+    string message = 1;
+}
+
+message Tokens {
+  string accessToken = 1;
+  string refreshToken = 2;
+}
+
+message GetUserInfoRequest {
+    string accessToken = 1;
+}
+
+message User {
+    int32 id = 1;
+    string login = 2;
+    string password = 3;
+    bool isActive = 4;
+}
+
+message LogoutUserRequest {
+  string refreshToken = 1;
+}

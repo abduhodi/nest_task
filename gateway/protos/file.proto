@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package file;
+
+service FileService {
+    rpc CreateFile(CreateFileRequest) returns (File) {}
+    rpc FindAllFiles(Empty) returns (Files) {}
+    rpc FindOneFile(FindOneFileRequest) returns (File) {}
+    rpc UpdateFile(UpdateFileRequest) returns (File) {}
+    rpc RemoveFile(FindOneFileRequest) returns (File) {}
+    rpc QueryFile(stream PaginationRequest) returns (stream File) {}
+}
+
+message File {
+    int32 id = 1;
+    string fileName = 2;
+    string extension = 3;
+    int32 fileSize = 4;
+    string filePath = 5;
+}
+
+message CreateFileRequest {
+    string fileName = 1;
+    bytes file = 2;
+    string fileType = 3;
+}
+
+message Empty {}
+
+message Files {
+    repeated File files = 1;
+}
+
+message FindOneFileRequest {
+    int32 id = 1;
+}
+
+message UpdateFileRequest {
+    int32 id = 1;
+    string fileName = 2;
+}
+
+message PaginationRequest {
+    int32 page = 1;
+    int32 skip = 2;
+}
